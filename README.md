@@ -23,25 +23,40 @@ sudo apt install curl ca-certificates gnupg -y
 
 
 tmp_key="$(mktemp)"
+
 tmp_gnupg="$(mktemp -d)"
+
 status_code=1
 
 if curl -fsSLo "$tmp_key" https://downloads.claude.ai/claude-desktop/key.asc && \
+
    key_metadata="$(GNUPGHOME="$tmp_gnupg" gpg --batch --show-keys --with-colons "$tmp_key")"; then
+   
     fingerprint="$(printf '%s\n' "$key_metadata" | awk -F: '$1 == "fpr" {print $10; exit}')"
+    
     printf 'Anthropic key fingerprint: %s\n' "$fingerprint"
 
     if [ "$fingerprint" = "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" ]; then
+    
         sudo install -Dm644 "$tmp_key" /usr/share/keyrings/claude-desktop-archive-keyring.asc
+        
         status_code=$?
+        
     else
+    
         echo "Unexpected Anthropic signing key fingerprint" >&2
+        
     fi
+    
 else
+
     echo "Anthropic key download or inspection failed" >&2
+    
 fi
 
+
 rm -rf "$tmp_key" "$tmp_gnupg"
+
 [ "$status_code" -eq 0 ]
 
 
@@ -52,79 +67,125 @@ arch="$(dpkg --print-architecture)"
 
 
 case "$arch" in
+
     amd64|arm64)
+    
         echo 'deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main' \
+        
         | sudo tee /etc/apt/sources.list.d/claude-desktop.list > /dev/null
+        
         ;;
+        
     *)
+    
         printf 'Unsupported Claude Desktop architecture: %s\n' "$arch" >&2
+        
         false
+        
         ;;
+        
 esac
 
 
 sudo apt update
+
 apt-cache policy claude-desktop
 
+
 sudo apt install claude-desktop -y
+
 claude-desktop
 
+
 <b>3)install ollama</b>
+
 curl -fsSL https://ollama.com/install.sh | sh
+
 
 export ANTHROPIC_BASE_URL=http://localhost:11434
 
+
 ollama pull qwen2.5:3b
+
 
 sudo systemctl edit ollama
 
+
 [Service]
+
 Environment="OLLAMA_HOST=0.0.0.0:11434"
+
 <img width="940" height="433" alt="image" src="https://github.com/user-attachments/assets/0cc6276c-2e3f-4e99-abc3-f97299f91cbe" />
  
 sudo systemctl daemon-reload
+
 sudo systemctl restart ollama
+
 
 
 curl http://VM_IP_ADDRESS:11434/api/tags
 
 
 <b>4)Install mcp ollama</b>
+
 sudo apt install npm
 
 git clone https://github.com/MikeyBeez/mcp-ollama.git
 
+
 cd mcp-ollama
+
 npm install --save-dev @types/node-fetch@2
+
 npm run build
+
 npm uninstall node-fetch
+
 npm install node-fetch@2
+
 rm -rf dist
+
 npm run build
+
 
 
 <b>Install mcp packet tracer - continue</b>
+
 cd MCP-PT
+
 source mcp-pkt/bin/activate
+
 pip install -e . => install using local python file
+
 python -m packet_tracer_mcp --stdio
+
 **if working, no error message. Control-C to exit
 
+
 <b>5)Install Packet Tracer</b>
+
 Download from Cisco Netacad
 
 cd ~/Downloads
+
 sudo apt install ./CiscoPacketTracer_901_Ubuntu_64bit.deb
 
 
+
 <b>6)If import given OVA, OVA comes with all the above installed</b>
+
 Start claude-desktop and login for claude to generate the claude_desktop_config.json.
+
 Shutdown claude-desktop before doing the steps below.
 
+
 cd MCP-PT
+
 source mcp-pkt/bin/activate
 
+
 nano /home/analyst/.config/Claude/claude_desktop_config.json
+
 
 "mcpServers": {
     "ollama": {
