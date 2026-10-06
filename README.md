@@ -3,14 +3,21 @@
 <b>1)install MCP packet tracer</b>
 
 git clone https://github.com/hanley/MCP-PT.git
+
 cd MCP-PT
+
 sudo apt install python3.12-venv
+
 python3 -m venv mcp-pkt
+
 source mcp-pkt/bin/activate
+
 pip install -e .
 
 <b>2)install claude</b>
+
 sudo apt update
+
 sudo apt install curl ca-certificates gnupg -y
 
 
