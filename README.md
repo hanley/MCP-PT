@@ -66,7 +66,9 @@ rm -rf "$tmp_key" "$tmp_gnupg"
 arch="$(dpkg --print-architecture)"
 
 
+
 case "$arch" in
+
 
     amd64|arm64)
     
@@ -83,6 +85,7 @@ case "$arch" in
         false
         
         ;;
+        
         
 esac
 
@@ -184,34 +187,54 @@ cd MCP-PT
 source mcp-pkt/bin/activate
 
 
+
 nano /home/analyst/.config/Claude/claude_desktop_config.json
 
 
 "mcpServers": {
+
     "ollama": {
+    
       "command": "node",
+      
       "args": ["/home/analyst/mcp-ollama/dist/index.js"],
+      
       "env": {
+      
         "OLLAMA_BASE_URL": "http://< VM_IP_ADDRESS>:11434"
+        
       }
+      
     }
+    
   },
+  
 
 **When using claude-desktop, no way to choose the model, must specify in the prompt such as
+
 "Use the Ollama MCP server to list the available Ollama models.
+
 Use qwen2.5:3b through Ollama to answer my next networking question."
+
 
 or
 
 "Use the Ollama MCP server and ask qwen2.5:3b:
+
 Explain how to configure a VLAN on a Cisco IOS switch."
+
 
 nano /home/analyst/.config/Claude/claude_desktop_config.json
 
+
 , "packet-tracer": { 
+
     "command": "/home/analyst/MCP-Packet-Tracer/mcp-pkt/bin/python", 
+    
     "args": [ "-m", "packet_tracer_mcp", "--stdio" ] 
+    
     }
+    
 
 <img width="940" height="614" alt="image" src="https://github.com/user-attachments/assets/c76f2111-332e-40e4-a5ad-c78d0818f51a" />
 
@@ -228,46 +251,74 @@ Create token on terminal if No MCP token found on this machine.
  <img width="539" height="53" alt="image" src="https://github.com/user-attachments/assets/a5fc2f82-c5a7-43ac-9db8-51e9f9907f5b" />
 
 Do this on the Ubuntu machine where you run packet_tracer_mcp:
+
 cd MCP-PT
+
 source mcp-pkt/bin/activate
+
 
 echo "$PT_MCP_BRIDGE_TOKEN"
+
 If it is empty, generate one:
+
 export PT_MCP_BRIDGE_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
+
 
 Need to ask the prompt
+
 "Use the Packet Tracer MCP tool pt_bridge_status and tell me the connection status."
+
 To allow the connection from claude desktop
 
+
 <B><U>How to start the system</U></B>
+
 cd MCP-Packet-Tracer
+
 source mcp-pkt/bin/activate
+
 export PT_MCP_BRIDGE_TOKEN=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
+
 python -m packet_tracer_mcp --stdio
+
 open another terminal (don’t start claude from menu)
+
 claude-desktop
+
 import packet tracer skill into claude
+
 start packet tracer
+
 if MCP control center still not connected,
+
 send a prompt in claude-desktop
+
 “Use the ollama MCP and Packet Tracer MCP tool pt_bridge_status and tell me the connection status.”
+
 Restart packet
 
 
+
 Example Prompt:
+
 Using ollama mcp, Using the Packet Tracer MCP tools, create a topology plan with
+
 2 routers, 2 switches and 4 PCs.
+
 Do not deploy it yet.
+
 <img width="684" height="573" alt="image" src="https://github.com/user-attachments/assets/502c8a35-be5b-416a-b569-55cc7ad0edb8" />
 
 <img width="940" height="914" alt="image" src="https://github.com/user-attachments/assets/844b61c8-8f0a-4af4-99a0-b02fa4e2127c" />
 
 Using ollama mcp, Validate the topology.
+
 <img width="940" height="654" alt="image" src="https://github.com/user-attachments/assets/0e432298-a4f7-4905-95c7-e8bd91cabab9" />
 
 <img width="940" height="501" alt="image" src="https://github.com/user-attachments/assets/38c9a198-921e-4c44-b090-c8619c819bb8" />
 
 Using ollama mcp, deploy the topology into Packet Tracer.
+
 
 <img width="940" height="658" alt="image" src="https://github.com/user-attachments/assets/4a72cd05-94dc-43bf-bc58-36335ecb991e" />
 
