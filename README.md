@@ -1,6 +1,7 @@
 <b>Install on a fresh copy of ubuntu</b>
 
 <b>1)install MCP packet tracer</b>
+
 git clone https://github.com/hanley/MCP-PT.git
 cd MCP-PT
 sudo apt install python3.12-venv
