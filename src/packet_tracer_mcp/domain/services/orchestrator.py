@@ -40,6 +40,18 @@ def plan_from_request(request: TopologyRequest) -> tuple[TopologyPlan, Validatio
     except Exception:
         pass
 
+    # ---------------------------------------------------------
+    # Special topology: Spine-Leaf
+    # ---------------------------------------------------------
+    if request.template == TopologyTemplate.SPINE_LEAF:
+        _create_spine_leaf_devices(plan)
+        _create_spine_leaf_links(plan)
+
+        _create_validations(plan)
+
+        result = validate_plan(plan)
+        return plan, result
+    
     pcs_list = _normalize_pcs(request)
     laptops_list = _normalize_laptops(request)
 
@@ -117,6 +129,117 @@ def _layout_metrics(req: TopologyRequest, pcs_list: list[int],
     left_reach = max(widest, req.servers) * LAYOUT_PC_X_SPACING // 2
     return max(LAYOUT_X_START, left_reach), column_width
 
+def _create_spine_leaf_devices(plan: TopologyPlan) -> None:
+    """
+    Fixed 2-spine / 4-leaf topology.
+
+    Spine:
+        2 x Cisco 3650-24PS
+
+    Leaf:
+        4 x Cisco 2960-24TT
+    """
+
+    spine_positions = [
+        (400, 120),
+        (800, 120),
+    ]
+
+    for i, (x, y) in enumerate(spine_positions, start=1):
+        plan.devices.append(
+            DevicePlan(
+                name=f"SPINE{i}",
+                model="3650-24PS",
+                category="switch",
+                role=DeviceRole.DISTRIBUTION_SWITCH,
+                x=x,
+                y=y,
+            )
+        )
+
+    leaf_positions = [
+        (200, 350),
+        (450, 350),
+        (700, 350),
+        (950, 350),
+    ]
+
+    for i, (x, y) in enumerate(leaf_positions, start=1):
+        plan.devices.append(
+            DevicePlan(
+                name=f"LEAF{i}",
+                model="2960-24TT",
+                category="switch",
+                role=DeviceRole.ACCESS_SWITCH,
+                x=x,
+                y=y,
+            )
+        )
+
+def _create_spine_leaf_links(plan: TopologyPlan) -> None:
+    """
+    Each leaf connects to both spines.
+
+    Spine uplinks:
+        Gi1/1/1 - Gi1/1/4
+
+    Leaf uplinks:
+        Gi0/1 -> SPINE1
+        Gi0/2 -> SPINE2
+    """
+
+    links = [
+        # LEAF1
+        (
+            "SPINE1", "GigabitEthernet1/1/1",
+            "LEAF1", "GigabitEthernet0/1",
+        ),
+        (
+            "SPINE2", "GigabitEthernet1/1/1",
+            "LEAF1", "GigabitEthernet0/2",
+        ),
+
+        # LEAF2
+        (
+            "SPINE1", "GigabitEthernet1/1/2",
+            "LEAF2", "GigabitEthernet0/1",
+        ),
+        (
+            "SPINE2", "GigabitEthernet1/1/2",
+            "LEAF2", "GigabitEthernet0/2",
+        ),
+
+        # LEAF3
+        (
+            "SPINE1", "GigabitEthernet1/1/3",
+            "LEAF3", "GigabitEthernet0/1",
+        ),
+        (
+            "SPINE2", "GigabitEthernet1/1/3",
+            "LEAF3", "GigabitEthernet0/2",
+        ),
+
+        # LEAF4
+        (
+            "SPINE1", "GigabitEthernet1/1/4",
+            "LEAF4", "GigabitEthernet0/1",
+        ),
+        (
+            "SPINE2", "GigabitEthernet1/1/4",
+            "LEAF4", "GigabitEthernet0/2",
+        ),
+    ]
+
+    for dev_a, port_a, dev_b, port_b in links:
+        plan.links.append(
+            LinkPlan(
+                device_a=dev_a,
+                port_a=port_a,
+                device_b=dev_b,
+                port_b=port_b,
+                cable=infer_cable("switch", "switch"),
+            )
+        )
 
 def _create_devices(plan: TopologyPlan, req: TopologyRequest, pcs_list: list[int], laptops_list: list[int]):
     router_model = req.router_model or DEFAULT_ROUTER
