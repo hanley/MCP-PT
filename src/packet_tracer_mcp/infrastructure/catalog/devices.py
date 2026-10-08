@@ -162,9 +162,25 @@ def _switch_3560_ports() -> tuple[PortSpec, ...]:
     return fast + gig
 
 def _switch_3650_ports() -> tuple[PortSpec, ...]:
-    fast = tuple(_fast(f"0/{i}") for i in range(1, 25))
-    gig = (_gig("0/1"), _gig("0/2"))
-    return fast + gig
+    """
+    Cisco 3650-24PS in Packet Tracer 9.x
+
+    Physical interfaces:
+      GigabitEthernet1/0/1 - GigabitEthernet1/0/24
+      GigabitEthernet1/1/1 - GigabitEthernet1/1/4
+    """
+
+    access_ports = tuple(
+        _gig(f"1/0/{i}")
+        for i in range(1, 25)
+    )
+
+    uplink_ports = tuple(
+        _gig(f"1/1/{i}")
+        for i in range(1, 5)
+    )
+
+    return access_ports + uplink_ports
 
 SWITCH_3560 = DeviceModel(
     pt_type="3560-24PS", category="switch", display_name="Cisco 3560-24PS",
