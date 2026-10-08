@@ -20,6 +20,7 @@ class TopologyTemplate(str, Enum):
     BRANCH_OFFICE = "branch_office"
     ROUTER_ON_A_STICK = "router_on_a_stick"
     THREE_ROUTER_TRIANGLE = "three_router_triangle"
+    SPINE_LEAF = "spine_leaf"
     CUSTOM = "custom"
 
 
