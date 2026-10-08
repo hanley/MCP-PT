@@ -1294,12 +1294,12 @@ def register_tools(mcp: FastMCP) -> None:
         js = (
             "var aw=ipc.appWindow();"
             f"var dir={json.dumps(directory.strip())};"
-            "if(!dir){dir=String(aw.getDefaultFileSaveLocation());}"
+            "if(!dir){dir='/home/analyst/Downloads';}"
             "dir=String(dir).replace(/\\\\/g,'/').replace(/\\/+$/,'');"
             f"var full=dir+'/'+{json.dumps(name)};"
             "aw.fileSaveAsNoPrompt(full,false);"
             "var fm=ipc.systemFileManager();"
-            "reportResult(fm.fileExists(full)?('OK:'+full+'|'+fm.getFileSize(full)):('ERR: I don't believe it '+full));"
+            "reportResult(fm.fileExists(full)?('OK:'+full+'|'+fm.getFileSize(full)):('ERR: File was not created: '+full));"
         )
         result = _bridge_send_and_wait(js, timeout=20.0)
         if result is None:
