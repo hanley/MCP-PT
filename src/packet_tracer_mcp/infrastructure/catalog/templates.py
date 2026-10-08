@@ -32,14 +32,14 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         description="1 router + 1 switch + PCs. Red local simple.",
         min_routers=1, max_routers=1, default_routers=1,
         default_pcs_per_lan=5,
-        tags=("básico", "lan", "principiante"),
+        tags=("basic", "LAN", "beginner"),
     ),
     TopologyTemplate.MULTI_LAN: TemplateSpec(
         name="Multi LAN",
         key=TopologyTemplate.MULTI_LAN,
         description="N daisy-chain routers, each with its LAN.",
         default_routers=2, default_pcs_per_lan=3,
-        tags=("intermedio", "multi-lan", "routing"),
+        tags=("intermediate", "multi-lan", "routing"),
     ),
     TopologyTemplate.MULTI_LAN_WAN: TemplateSpec(
         name="Multi LAN + WAN",
@@ -47,7 +47,7 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         description="N routers with LANs + WAN (Cloud) connection.",
         default_routers=3, default_pcs_per_lan=3,
         requires_wan=True,
-        tags=("intermedio", "wan", "cloud"),
+        tags=("intermediate", "wan", "cloud"),
     ),
     TopologyTemplate.STAR: TemplateSpec(
         name="Star (Hub & Spoke)",
@@ -55,14 +55,14 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         description="1 central router connected to N switches.",
         min_routers=1, max_routers=1, default_routers=1,
         default_switches_per_router=3, default_pcs_per_lan=4,
-        tags=("básico", "star", "centralizado"),
+        tags=("basic", "star", "centralized"),
     ),
     TopologyTemplate.HUB_SPOKE: TemplateSpec(
         name="Hub and Spoke",
         key=TopologyTemplate.HUB_SPOKE,
         description="1 central hub router + N spoke routers, each with its LAN.",
         default_routers=4, default_pcs_per_lan=2,
-        tags=("avanzado", "wan", "hub-spoke"),
+        tags=("Advanced", "wan", "hub-spoke"),
     ),
     TopologyTemplate.BRANCH_OFFICE: TemplateSpec(
         name="Branch Office",
@@ -79,7 +79,7 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         min_routers=3, max_routers=3, default_routers=3,
         default_pcs_per_lan=3,
         default_routing=RoutingProtocol.OSPF,
-        tags=("avanzado", "redundancia", "ospf"),
+        tags=("Advanced", "Redundancy", "ospf"),
     ),
     TopologyTemplate.ROUTER_ON_A_STICK: TemplateSpec(
         name="Router on a Stick",
@@ -87,13 +87,13 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         description="1 router + 1 switch with inter-VLAN routing (subinterfaces .1q).",
         min_routers=1, max_routers=1, default_routers=1,
         default_switches_per_router=1, default_pcs_per_lan=6,
-        tags=("avanzado", "vlan", "inter-vlan"),
+        tags=("Advanced", "vlan", "inter-vlan"),
     ),
     TopologyTemplate.CUSTOM: TemplateSpec(
         name="Custom",
         key=TopologyTemplate.CUSTOM,
         description="Free topology — all manual parameters.",
-        tags=("libre", "custom"),
+        tags=("Free", "custom"),
     ),
 }
 
