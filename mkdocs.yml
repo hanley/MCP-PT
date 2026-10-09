@@ -1,11 +1,10 @@
 site_name: Packet Tracer MCP
 site_description: AI-powered Cisco Packet Tracer automation via the Model Context Protocol — plan, validate, generate and deploy full network topologies from natural language.
-site_url: https://mats2208.github.io/MCP-Packet-Tracer/
-site_author: Mats2208
-repo_url: https://github.com/Mats2208/MCP-Packet-Tracer
-repo_name: Mats2208/MCP-Packet-Tracer
+site_url: 
+repo_url: 
+repo_name: 
 edit_uri: edit/main/docs/
-copyright: Copyright &copy; 2026 Mateo (Mats2208) — MIT License
+copyright: 
 
 theme:
   name: material
@@ -65,7 +64,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Mats2208/MCP-Packet-Tracer
+      link: 
 
 nav:
   - Home: index.md
