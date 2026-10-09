@@ -21,7 +21,7 @@ sudo apt update
 sudo apt install curl ca-certificates gnupg -y
 
 
-## Update Claude repository
+### Update Claude repository
 ```
 tmp_key="$(mktemp)"
 tmp_gnupg="$(mktemp -d)"
@@ -49,7 +49,7 @@ rm -rf "$tmp_key" "$tmp_gnupg"
 
 
 
-## sign the app
+### sign the app
 ```
 arch="$(dpkg --print-architecture)"
 
