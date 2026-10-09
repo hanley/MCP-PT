@@ -79,6 +79,7 @@ claude-desktop
 
 <b>3)install ollama</b>
 
+cd ~
 
 curl -fsSL https://ollama.com/install.sh | sh
 
