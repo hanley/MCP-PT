@@ -35,36 +35,36 @@ status_code=1
 <i>start install</i>
 <br>
 
-if curl -fsSLo "$tmp_key" https://downloads.claude.ai/claude-desktop/key.asc && \
+   if curl -fsSLo "$tmp_key" https://downloads.claude.ai/claude-desktop/key.asc && \
 
-   key_metadata="$(GNUPGHOME="$tmp_gnupg" gpg --batch --show-keys --with-colons "$tmp_key")"; then
+      key_metadata="$(GNUPGHOME="$tmp_gnupg" gpg --batch --show-keys --with-colons "$tmp_key")"; then
    
-    fingerprint="$(printf '%s\n' "$key_metadata" | awk -F: '$1 == "fpr" {print $10; exit}')"
+       fingerprint="$(printf '%s\n' "$key_metadata" | awk -F: '$1 == "fpr" {print $10; exit}')"
     
-    printf 'Anthropic key fingerprint: %s\n' "$fingerprint"
+       printf 'Anthropic key fingerprint: %s\n' "$fingerprint"
 
-    if [ "$fingerprint" = "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" ]; then
+       if [ "$fingerprint" = "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" ]; then
     
-        sudo install -Dm644 "$tmp_key" /usr/share/keyrings/claude-desktop-archive-keyring.asc
+           sudo install -Dm644 "$tmp_key" /usr/share/keyrings/claude-desktop-archive-keyring.asc
         
-        status_code=$?
+           status_code=$?
         
-    else
+       else
     
-        echo "Unexpected Anthropic signing key fingerprint" >&2
+           echo "Unexpected Anthropic signing key fingerprint" >&2
         
-    fi
+       fi
     
-else
+   else
 
-    echo "Anthropic key download or inspection failed" >&2
+       echo "Anthropic key download or inspection failed" >&2
     
-fi
+   fi
 
 
-rm -rf "$tmp_key" "$tmp_gnupg"
+   rm -rf "$tmp_key" "$tmp_gnupg"
 
-[ "$status_code" -eq 0 ]
+   [ "$status_code" -eq 0 ]
 
 
 
