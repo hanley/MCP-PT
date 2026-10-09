@@ -199,14 +199,15 @@ Explain how to configure a VLAN on a Cisco IOS switch."
 nano /home/analyst/.config/Claude/claude_desktop_config.json
 
 ```
-, "packet-tracer": { 
-
-    "command": "/home/analyst/MCP-PT/mcp-pkt/bin/python", 
-    
-    "args": [ "-m", "packet_tracer_mcp", "--stdio" ] 
-    
-    }
-    
+,
+  "packet-tracer": {
+    "command": "/home/analyst/MCP-Packet-Tracer/mcp-pkt/bin/python",
+    "args": [
+      "-m",
+      "packet_tracer_mcp",
+      "--stdio"
+    ] 
+}
 ```
 <img width="940" height="614" alt="image" src="https://github.com/user-attachments/assets/c76f2111-332e-40e4-a5ad-c78d0818f51a" />
 
