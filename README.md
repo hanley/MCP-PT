@@ -136,7 +136,7 @@ npm run build
 
 <b>Install mcp packet tracer - continue</b>
 
-cd MCP-PT
+cd ~/MCP-PT
 
 source mcp-pkt/bin/activate
 
