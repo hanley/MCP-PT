@@ -128,31 +128,79 @@ def _router_config(router: DevicePlan, plan: TopologyPlan) -> str:
 
     return "\n".join(lines)
 
-
 def _switch_config(switch: DevicePlan, plan: TopologyPlan) -> str:
-    """Generates config of a switch: hostname + (if any) VLANs/access/trunks."""
+    """
+    Generates switch configuration:
+
+    - hostname
+    - VLANs
+    - access ports
+    - trunk ports
+    - management SVI IP address
+    """
+
     lines: list[str] = []
+
     lines.append("enable")
     lines.append("configure terminal")
     lines.append(f"hostname {switch.name}")
+    lines.append("")
 
-    # VLAN / access / trunk for this switch
+    # ---------------------------------------------------------
+    # VLAN / access / trunk
+    # ---------------------------------------------------------
+    access = [
+        a for a in plan.access_ports
+        if a.switch == switch.name
+    ]
 
-    access = [a for a in plan.access_ports if a.switch == switch.name]
-    trunks = [t for t in plan.trunks if t.switch == switch.name]
-    # The declared VLANs that have at least one port on this switch (or all, 
-    # if the plan defines them globally). We keep all of the plan's for simplicity.
-    
+    trunks = [
+        t for t in plan.trunks
+        if t.switch == switch.name
+    ]
+
     if access or trunks or plan.vlans:
         vlan_lines = generate_switch_vlan_cli(
-            plan.vlans, access, trunks, supports_encap=switch_supports_encap(switch.model)
+            plan.vlans,
+            access,
+            trunks,
+            supports_encap=switch_supports_encap(switch.model),
         )
+
         lines.extend(vlan_lines)
+        lines.append("")
+
+    # ---------------------------------------------------------
+    # Switch management SVI
+    # ---------------------------------------------------------
+    for iface, ip_cidr in switch.interfaces.items():
+
+        # Only process SVI interfaces here
+        if not iface.lower().startswith("vlan"):
+            continue
+
+        ip, prefix = ip_cidr.split("/")
+        mask = prefix_to_mask(int(prefix))
+
+        lines.append(f"interface {iface}")
+        lines.append(f" ip address {ip} {mask}")
+        lines.append(" no shutdown")
+        lines.append(" exit")
+        lines.append("")
+
+    # ---------------------------------------------------------
+    # Optional management default gateway
+    # ---------------------------------------------------------
+    if switch.gateway:
+        lines.append(
+            f"ip default-gateway {switch.gateway}"
+        )
+        lines.append("")
 
     lines.append("end")
     lines.append("write memory")
-    return "\n".join(lines)
 
+    return "\n".join(lines)
 
 def generate_pc_config(device: DevicePlan, use_dhcp: bool | None = None) -> str:
     """Generates setup instructions for a PC."""
