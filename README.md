@@ -102,6 +102,7 @@ claude-desktop
 
 <b>3)install ollama</b>
 
+
 curl -fsSL https://ollama.com/install.sh | sh
 
 
@@ -130,6 +131,8 @@ curl http://VM_IP_ADDRESS:11434/api/tags
 
 
 <b>4)Install mcp ollama</b>
+
+cd ~
 
 sudo apt install npm
 
@@ -229,7 +232,7 @@ nano /home/analyst/.config/Claude/claude_desktop_config.json
 
 , "packet-tracer": { 
 
-    "command": "/home/analyst/MCP-Packet-Tracer/mcp-pkt/bin/python", 
+    "command": "/home/analyst/MCP-PT/mcp-pkt/bin/python", 
     
     "args": [ "-m", "packet_tracer_mcp", "--stdio" ] 
     
@@ -273,7 +276,7 @@ To allow the connection from claude desktop
 
 <B><U>How to start the system</U></B>
 
-cd MCP-Packet-Tracer
+cd MCP-PT
 
 source mcp-pkt/bin/activate
 
