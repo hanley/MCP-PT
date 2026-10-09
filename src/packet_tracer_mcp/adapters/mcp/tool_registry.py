@@ -327,7 +327,7 @@ def register_tools(mcp: FastMCP) -> None:
         - router_model: Router model (1941, 2901, 2911, ISR4321) 
         - switch_model: Switch model (2960-24TT, 3560-24PS) 
         - template: Template (single_lan, multi_lan, multi_lan_wan, star, hub_spoke, 
-        branch_office, router_on_a_stick, three_router_triangle, custom)
+        branch_office, router_on_a_stick, three_router_triangle, spine_leaf, custom)
         - floating_routes: If True with routing=static, add backup paths with AD=254 
         by alternate paths (requires topology with multiple paths) 
         - ospf_process_id: OSPF process ID (1-65535, default 1) 
@@ -542,7 +542,7 @@ def register_tools(mcp: FastMCP) -> None:
         - router_model: 1941, 2901, 2911, ISR4321 
         - switch_model: 2960-24TT, 3560-24PS 
         - template: single_lan, multi_lan, multi_lan_wan, star, hub_spoke, 
-        branch_office, router_on_a_stick, three_router_triangle, custom 
+        branch_office, router_on_a_stick, three_router_triangle, spine_leaf, custom 
         - deploy: If True, copy script to clipboard and export files 
         - floating_routes: If True with routing=static, add backup paths with AD=254 
         - ospf_process_id: OSPF process ID (1-65535, default 1) 
