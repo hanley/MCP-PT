@@ -63,6 +63,9 @@ rm -rf "$tmp_key" "$tmp_gnupg"
 
 
 
+
+
+
 arch="$(dpkg --print-architecture)"
 
 
