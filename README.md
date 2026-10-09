@@ -91,10 +91,11 @@ ollama pull qwen2.5:3b
 
 sudo systemctl edit ollama
 
-
+```
 [Service]
 
 Environment="OLLAMA_HOST=0.0.0.0:11434"
+```
 
 <img width="940" height="433" alt="image" src="https://github.com/user-attachments/assets/0cc6276c-2e3f-4e99-abc3-f97299f91cbe" />
  
@@ -169,7 +170,7 @@ source mcp-pkt/bin/activate
 
 
 nano /home/analyst/.config/Claude/claude_desktop_config.json
-
+```
 
 "mcpServers": {
 
@@ -189,7 +190,7 @@ nano /home/analyst/.config/Claude/claude_desktop_config.json
     
   },
   
-
+```
 **When using claude-desktop, no way to choose the model, must specify in the prompt such as
 
 "Use the Ollama MCP server to list the available Ollama models.
@@ -206,7 +207,7 @@ Explain how to configure a VLAN on a Cisco IOS switch."
 
 nano /home/analyst/.config/Claude/claude_desktop_config.json
 
-
+```
 , "packet-tracer": { 
 
     "command": "/home/analyst/MCP-PT/mcp-pkt/bin/python", 
@@ -215,7 +216,7 @@ nano /home/analyst/.config/Claude/claude_desktop_config.json
     
     }
     
-
+```
 <img width="940" height="614" alt="image" src="https://github.com/user-attachments/assets/c76f2111-332e-40e4-a5ad-c78d0818f51a" />
 
 Use web browser to go to https://github.com/Mats2208/MCP-Packet-Tracer to download V5.2.pts
