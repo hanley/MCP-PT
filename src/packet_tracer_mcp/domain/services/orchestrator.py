@@ -51,7 +51,7 @@ def plan_from_request(request: TopologyRequest) -> tuple[TopologyPlan, Validatio
 
         result = validate_plan(plan)
         return plan, result
-    
+
     pcs_list = _normalize_pcs(request)
     laptops_list = _normalize_laptops(request)
 
