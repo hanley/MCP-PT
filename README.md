@@ -1,4 +1,4 @@
-<b>Install on a fresh copy of ubuntu</b>
+# Install on a fresh copy of ubuntu
 
 <b>1)install MCP packet tracer</b>
 
