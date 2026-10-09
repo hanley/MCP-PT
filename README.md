@@ -172,25 +172,15 @@ source mcp-pkt/bin/activate
 
 nano /home/analyst/.config/Claude/claude_desktop_config.json
 ```
-
-"mcpServers": {
-
+  "mcpServers": {
     "ollama": {
-    
       "command": "node",
-      
       "args": ["/home/analyst/mcp-ollama/dist/index.js"],
-      
       "env": {
-      
         "OLLAMA_BASE_URL": "http://< VM_IP_ADDRESS>:11434"
-        
       }
-      
     }
-    
   },
-  
 ```
 **When using claude-desktop, no way to choose the model, must specify in the prompt such as
 
