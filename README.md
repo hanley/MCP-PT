@@ -1,6 +1,6 @@
 # Install on a fresh copy of ubuntu
 
-<b>1)install MCP packet tracer</b>
+## 1)install MCP packet tracer
 
 git clone https://github.com/hanley/MCP-PT.git
 
@@ -14,7 +14,7 @@ source mcp-pkt/bin/activate
 
 pip install -e .
 
-<b>2)install claude</b>
+## 2)install claude
 
 sudo apt update
 
@@ -77,7 +77,7 @@ sudo apt install claude-desktop -y
 claude-desktop
 
 
-<b>3)install ollama</b>
+## 3)install ollama
 
 cd ~
 
@@ -109,7 +109,7 @@ sudo systemctl restart ollama
 curl http://VM_IP_ADDRESS:11434/api/tags
 
 
-<b>4)Install mcp ollama</b>
+## 4)Install mcp ollama
 
 cd ~
 
@@ -147,7 +147,7 @@ python -m packet_tracer_mcp --stdio
 **if working, no error message. Control-C to exit
 
 
-<b>5)Install Packet Tracer</b>
+## 5)Install Packet Tracer
 
 Download from Cisco Netacad
 
@@ -157,7 +157,7 @@ sudo apt install ./CiscoPacketTracer_901_Ubuntu_64bit.deb
 
 
 
-<b>6)If import given OVA, OVA comes with all the above installed</b>
+# If import given OVA, OVA comes with all the above installed
 
 Start claude-desktop and login for claude to generate the claude_desktop_config.json.
 
@@ -244,7 +244,7 @@ Need to ask the prompt
 To allow the connection from claude desktop
 
 
-<B><U>How to start the system</U></B>
+# How to start the system
 
 cd MCP-PT
 
