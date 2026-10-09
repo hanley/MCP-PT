@@ -21,12 +21,16 @@ sudo apt update
 sudo apt install curl ca-certificates gnupg -y
 
 
+<i>Update Claude repository and install</i>
+<i>update variable</i>
 
 tmp_key="$(mktemp)"
 
 tmp_gnupg="$(mktemp -d)"
 
 status_code=1
+
+<i>start install</i>
 
 if curl -fsSLo "$tmp_key" https://downloads.claude.ai/claude-desktop/key.asc && \
 
@@ -64,7 +68,7 @@ rm -rf "$tmp_key" "$tmp_gnupg"
 
 
 
-
+<i>sign the app</i>
 
 arch="$(dpkg --print-architecture)"
 
