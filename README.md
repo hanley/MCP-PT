@@ -1,6 +1,6 @@
 # Install on a fresh copy of ubuntu
 
-## 1)install MCP packet tracer
+## 1)Install MCP packet tracer
 
 git clone https://github.com/hanley/MCP-PT.git
 
@@ -14,7 +14,7 @@ source mcp-pkt/bin/activate
 
 pip install -e .
 
-## 2)install claude
+## 2)Install claude
 
 sudo apt update
 
@@ -49,7 +49,7 @@ rm -rf "$tmp_key" "$tmp_gnupg"
 
 
 
-### sign the app
+### Sign the app
 ```
 arch="$(dpkg --print-architecture)"
 
@@ -77,7 +77,7 @@ sudo apt install claude-desktop -y
 claude-desktop
 
 
-## 3)install ollama
+## 3)Install ollama
 
 cd ~
 
