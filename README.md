@@ -21,7 +21,7 @@ sudo apt update
 sudo apt install curl ca-certificates gnupg -y
 
 
-<i>Update Claude repository</i>
+## Update Claude repository
 ```
 tmp_key="$(mktemp)"
 tmp_gnupg="$(mktemp -d)"
@@ -49,7 +49,7 @@ rm -rf "$tmp_key" "$tmp_gnupg"
 
 
 
-<i>sign the app</i>
+## sign the app
 ```
 arch="$(dpkg --print-architecture)"
 
@@ -134,7 +134,7 @@ npm run build
 
 
 
-<b>Install mcp packet tracer - continue</b>
+## Install mcp packet tracer - continue
 
 cd ~/MCP-PT
 
