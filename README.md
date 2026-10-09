@@ -22,84 +22,49 @@ sudo apt install curl ca-certificates gnupg -y
 
 
 <i>Update Claude repository and install</i>
-
-<i>update variable</i>
-
+```
 tmp_key="$(mktemp)"
-
 tmp_gnupg="$(mktemp -d)"
-
 status_code=1
 
+if curl -fsSLo "$tmp_key" https://downloads.claude.ai/claude-desktop/key.asc && \
+   key_metadata="$(GNUPGHOME="$tmp_gnupg" gpg --batch --show-keys --with-colons "$tmp_key")"; then
+    fingerprint="$(printf '%s\n' "$key_metadata" | awk -F: '$1 == "fpr" {print $10; exit}')"
+    printf 'Anthropic key fingerprint: %s\n' "$fingerprint"
 
-<i>start install</i>
+    if [ "$fingerprint" = "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" ]; then
+        sudo install -Dm644 "$tmp_key" /usr/share/keyrings/claude-desktop-archive-keyring.asc
+        status_code=$?
+    else
+        echo "Unexpected Anthropic signing key fingerprint" >&2
+    fi
+else
+    echo "Anthropic key download or inspection failed" >&2
+fi
 
-
-```
-   if curl -fsSLo "$tmp_key" https://downloads.claude.ai/claude-desktop/key.asc && \
-
-      key_metadata="$(GNUPGHOME="$tmp_gnupg" gpg --batch --show-keys --with-colons "$tmp_key")"; then
-   
-       fingerprint="$(printf '%s\n' "$key_metadata" | awk -F: '$1 == "fpr" {print $10; exit}')"
-    
-       printf 'Anthropic key fingerprint: %s\n' "$fingerprint"
-
-       if [ "$fingerprint" = "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" ]; then
-    
-           sudo install -Dm644 "$tmp_key" /usr/share/keyrings/claude-desktop-archive-keyring.asc
-        
-           status_code=$?
-        
-       else
-    
-           echo "Unexpected Anthropic signing key fingerprint" >&2
-        
-       fi
-    
-   else
-
-       echo "Anthropic key download or inspection failed" >&2
-    
-   fi
-
-
-   rm -rf "$tmp_key" "$tmp_gnupg"
-
-   [ "$status_code" -eq 0 ]
-
+rm -rf "$tmp_key" "$tmp_gnupg"
+[ "$status_code" -eq 0 ]
 ```
 
 
 
 
 <i>sign the app</i>
-
-
+```
 arch="$(dpkg --print-architecture)"
 
-
-
 case "$arch" in
-
-
     amd64|arm64)
-    
         echo 'deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main' \
-        
         | sudo tee /etc/apt/sources.list.d/claude-desktop.list > /dev/null
-        
         ;;
-        
     *)
-    
         printf 'Unsupported Claude Desktop architecture: %s\n' "$arch" >&2
-        
         false
-        
         ;;
-        
-        
 esac
+
+```
 
 
 sudo apt update
