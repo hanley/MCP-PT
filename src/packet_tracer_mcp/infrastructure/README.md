@@ -67,6 +67,7 @@ Dict: `MODEL_ALIASES`
 | branch_office | 2-4 | OSPF | Branch Offices | 
 | three_router_triangle | 3 | OSPF | 3 Router Triangle | 
 | router_on_a_stick | 1 | none | Router-on-a-stick | 
+| spine_leaf | none | none | spine-leaf datacenter | 
 | custom | 1-20 | static | No restrictions |
 
 Function: `list_templates() → list[TemplateSpec]`
