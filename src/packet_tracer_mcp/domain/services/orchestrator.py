@@ -46,6 +46,9 @@ def plan_from_request(request: TopologyRequest) -> tuple[TopologyPlan, Validatio
     if request.template == TopologyTemplate.SPINE_LEAF:
         _create_spine_leaf_devices(plan)
         _create_spine_leaf_links(plan)
+        _create_spine_leaf_vlans(plan)
+        
+        _assign_spine_leaf_ip_addresses(plan)
 
         _create_validations(plan)
 
@@ -131,15 +134,21 @@ def _layout_metrics(req: TopologyRequest, pcs_list: list[int],
 
 def _create_spine_leaf_devices(plan: TopologyPlan) -> None:
     """
-    Fixed 2-spine / 4-leaf topology.
+    Fixed 2-spine / 4-leaf topology with one server per leaf.
 
     Spine:
         2 x Cisco 3650-24PS
 
     Leaf:
         4 x Cisco 2960-24TT
+
+    Servers:
+        4 x Server-PT
     """
 
+    # -----------------------------
+    # Spine switches
+    # -----------------------------
     spine_positions = [
         (400, 120),
         (800, 120),
@@ -157,6 +166,9 @@ def _create_spine_leaf_devices(plan: TopologyPlan) -> None:
             )
         )
 
+    # -----------------------------
+    # Leaf switches
+    # -----------------------------
     leaf_positions = [
         (200, 350),
         (450, 350),
@@ -176,61 +188,74 @@ def _create_spine_leaf_devices(plan: TopologyPlan) -> None:
             )
         )
 
-def _create_spine_leaf_links(plan: TopologyPlan) -> None:
-    """
-    Each leaf connects to both spines.
-
-    Spine uplinks:
-        Gi1/1/1 - Gi1/1/4
-
-    Leaf uplinks:
-        Gi0/1 -> SPINE1
-        Gi0/2 -> SPINE2
-    """
-
-    links = [
-        # LEAF1
-        (
-            "SPINE1", "GigabitEthernet1/1/1",
-            "LEAF1", "GigabitEthernet0/1",
-        ),
-        (
-            "SPINE2", "GigabitEthernet1/1/1",
-            "LEAF1", "GigabitEthernet0/2",
-        ),
-
-        # LEAF2
-        (
-            "SPINE1", "GigabitEthernet1/1/2",
-            "LEAF2", "GigabitEthernet0/1",
-        ),
-        (
-            "SPINE2", "GigabitEthernet1/1/2",
-            "LEAF2", "GigabitEthernet0/2",
-        ),
-
-        # LEAF3
-        (
-            "SPINE1", "GigabitEthernet1/1/3",
-            "LEAF3", "GigabitEthernet0/1",
-        ),
-        (
-            "SPINE2", "GigabitEthernet1/1/3",
-            "LEAF3", "GigabitEthernet0/2",
-        ),
-
-        # LEAF4
-        (
-            "SPINE1", "GigabitEthernet1/1/4",
-            "LEAF4", "GigabitEthernet0/1",
-        ),
-        (
-            "SPINE2", "GigabitEthernet1/1/4",
-            "LEAF4", "GigabitEthernet0/2",
-        ),
+    # -----------------------------
+    # Servers
+    # -----------------------------
+    server_positions = [
+        (200, 550),
+        (450, 550),
+        (700, 550),
+        (950, 550),
     ]
 
-    for dev_a, port_a, dev_b, port_b in links:
+    for i, (x, y) in enumerate(server_positions, start=1):
+        plan.devices.append(
+            DevicePlan(
+                name=f"SERVER{i}",
+                model="Server-PT",
+                category="server",
+                role=DeviceRole.SERVER_HOST,
+                x=x,
+                y=y,
+            )
+        )
+
+def _create_spine_leaf_links(plan: TopologyPlan) -> None:
+    """
+    Spine/leaf fabric:
+
+    Each leaf connects to both spines.
+
+    SPINE:
+        Gi1/1/1 - Gi1/1/4
+
+    LEAF:
+        Gi0/1 -> SPINE1
+        Gi0/2 -> SPINE2
+
+    Each leaf also connects to one server using Fa0/1.
+    """
+
+    # -----------------------------
+    # Spine <-> Leaf links
+    # -----------------------------
+    fabric_links = [
+        ("SPINE1", "GigabitEthernet1/1/1",
+         "LEAF1", "GigabitEthernet0/1"),
+
+        ("SPINE2", "GigabitEthernet1/1/1",
+         "LEAF1", "GigabitEthernet0/2"),
+
+        ("SPINE1", "GigabitEthernet1/1/2",
+         "LEAF2", "GigabitEthernet0/1"),
+
+        ("SPINE2", "GigabitEthernet1/1/2",
+         "LEAF2", "GigabitEthernet0/2"),
+
+        ("SPINE1", "GigabitEthernet1/1/3",
+         "LEAF3", "GigabitEthernet0/1"),
+
+        ("SPINE2", "GigabitEthernet1/1/3",
+         "LEAF3", "GigabitEthernet0/2"),
+
+        ("SPINE1", "GigabitEthernet1/1/4",
+         "LEAF4", "GigabitEthernet0/1"),
+
+        ("SPINE2", "GigabitEthernet1/1/4",
+         "LEAF4", "GigabitEthernet0/2"),
+    ]
+
+    for dev_a, port_a, dev_b, port_b in fabric_links:
         plan.links.append(
             LinkPlan(
                 device_a=dev_a,
@@ -240,6 +265,159 @@ def _create_spine_leaf_links(plan: TopologyPlan) -> None:
                 cable=infer_cable("switch", "switch"),
             )
         )
+
+    # -----------------------------
+    # Leaf <-> Server links
+    # -----------------------------
+    server_links = [
+        ("LEAF1", "FastEthernet0/1", "SERVER1", "FastEthernet0"),
+        ("LEAF2", "FastEthernet0/1", "SERVER2", "FastEthernet0"),
+        ("LEAF3", "FastEthernet0/1", "SERVER3", "FastEthernet0"),
+        ("LEAF4", "FastEthernet0/1", "SERVER4", "FastEthernet0"),
+    ]
+
+    for leaf, leaf_port, server, server_port in server_links:
+        plan.links.append(
+            LinkPlan(
+                device_a=leaf,
+                port_a=leaf_port,
+                device_b=server,
+                port_b=server_port,
+                cable=infer_cable("switch", "server"),
+            )
+        )
+
+def _create_spine_leaf_vlans(plan: TopologyPlan) -> None:
+    """
+    VLAN design:
+
+    VLAN 10 -> SERVER1, SERVER2
+    VLAN 20 -> SERVER3, SERVER4
+
+    All leaf-to-spine links are trunks carrying VLAN 10 and 20.
+    """
+
+    # -----------------------------
+    # Create VLANs
+    # -----------------------------
+    plan.vlans = [
+        VLANConfig(vlan_id=10, name="SERVERS_A"),
+        VLANConfig(vlan_id=20, name="SERVERS_B"),
+        VLANConfig(vlan_id=99, name="MANAGEMENT"),
+    ]
+
+    # -----------------------------
+    # Server-facing access ports
+    # -----------------------------
+    plan.access_ports.extend([
+        AccessPortConfig(
+            switch="LEAF1",
+            port="FastEthernet0/1",
+            vlan_id=10,
+        ),
+        AccessPortConfig(
+            switch="LEAF2",
+            port="FastEthernet0/1",
+            vlan_id=10,
+        ),
+        AccessPortConfig(
+            switch="LEAF3",
+            port="FastEthernet0/1",
+            vlan_id=20,
+        ),
+        AccessPortConfig(
+            switch="LEAF4",
+            port="FastEthernet0/1",
+            vlan_id=20,
+        ),
+    ])
+
+    # -----------------------------
+    # Leaf trunk ports
+    # -----------------------------
+    for leaf in ["LEAF1", "LEAF2", "LEAF3", "LEAF4"]:
+        plan.trunks.append(
+            TrunkConfig(
+                switch=leaf,
+                port="GigabitEthernet0/1",
+                allowed_vlans=[10, 20, 99]
+            )
+        )
+
+        plan.trunks.append(
+            TrunkConfig(
+                switch=leaf,
+                port="GigabitEthernet0/2",
+                allowed_vlans=[10, 20, 99]
+            )
+        )
+
+    # -----------------------------
+    # Spine trunk ports
+    # -----------------------------
+    for spine in ["SPINE1", "SPINE2"]:
+        for port_num in range(1, 5):
+            plan.trunks.append(
+                TrunkConfig(
+                    switch=spine,
+                    port=f"GigabitEthernet1/1/{port_num}",
+                    allowed_vlans=[10, 20, 99]
+                )
+            )
+
+def _assign_spine_leaf_ip_addresses(plan: TopologyPlan) -> None:
+    """
+    Assign management IP addresses to all switches and
+    static IP addresses to all servers.
+
+    VLAN 10 = SERVER1, SERVER2
+    VLAN 20 = SERVER3, SERVER4
+    VLAN 99 = switch management
+    """
+
+    # ---------------------------------------------------------
+    # Switch management addresses - VLAN 99
+    # ---------------------------------------------------------
+    switch_mgmt = {
+        "SPINE1": "192.168.99.11/24",
+        "SPINE2": "192.168.99.12/24",
+        "LEAF1": "192.168.99.21/24",
+        "LEAF2": "192.168.99.22/24",
+        "LEAF3": "192.168.99.23/24",
+        "LEAF4": "192.168.99.24/24",
+    }
+
+    for device_name, ip_cidr in switch_mgmt.items():
+        device = plan.device_by_name(device_name)
+
+        if device:
+            device.interfaces["Vlan99"] = ip_cidr
+
+    # ---------------------------------------------------------
+    # Servers - VLAN 10
+    # ---------------------------------------------------------
+    server1 = plan.device_by_name("SERVER1")
+    if server1:
+        server1.interfaces["FastEthernet0"] = "192.168.10.11/24"
+        server1.vlan = 10
+
+    server2 = plan.device_by_name("SERVER2")
+    if server2:
+        server2.interfaces["FastEthernet0"] = "192.168.10.12/24"
+        server2.vlan = 10
+
+    # ---------------------------------------------------------
+    # Servers - VLAN 20
+    # ---------------------------------------------------------
+    server3 = plan.device_by_name("SERVER3")
+    if server3:
+        server3.interfaces["FastEthernet0"] = "192.168.20.11/24"
+        server3.vlan = 20
+
+    server4 = plan.device_by_name("SERVER4")
+    if server4:
+        server4.interfaces["FastEthernet0"] = "192.168.20.12/24"
+        server4.vlan = 20
 
 def _create_devices(plan: TopologyPlan, req: TopologyRequest, pcs_list: list[int], laptops_list: list[int]):
     router_model = req.router_model or DEFAULT_ROUTER
@@ -552,11 +730,39 @@ def _create_vlans(plan: TopologyPlan, req: TopologyRequest):
             TrunkConfig(switch=switch.name, port=trunk_port, allowed_vlans=vlan_ids)
         )
 
-
 def _create_validations(plan: TopologyPlan):
     pcs = plan.devices_by_category("pc")
+    servers = plan.devices_by_category("server")
+
+    # Normal topologies
     if len(pcs) >= 2:
-        plan.validations.append(ValidationCheck(
-            check_type="ping", from_device=pcs[0].name,
-            to_target=pcs[-1].name, expected="Reply",
-        ))
+        plan.validations.append(
+            ValidationCheck(
+                check_type="ping",
+                from_device=pcs[0].name,
+                to_target=pcs[-1].name,
+                expected="Reply",
+            )
+        )
+
+    # Spine-leaf topology
+    if len(servers) >= 4:
+        # Same VLAN 10
+        plan.validations.append(
+            ValidationCheck(
+                check_type="ping",
+                from_device="SERVER1",
+                to_target="SERVER2",
+                expected="Reply",
+            )
+        )
+
+        # Same VLAN 20
+        plan.validations.append(
+            ValidationCheck(
+                check_type="ping",
+                from_device="SERVER3",
+                to_target="SERVER4",
+                expected="Reply",
+            )
+        )
