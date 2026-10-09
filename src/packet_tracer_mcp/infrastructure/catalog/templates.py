@@ -32,7 +32,7 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         description="1 router + 1 switch + PCs. Red local simple.",
         min_routers=1, max_routers=1, default_routers=1,
         default_pcs_per_lan=5,
-        tags=("basic", "LAN", "beginner"),
+        tags=("basic", "lan", "beginner"),
     ),
     TopologyTemplate.MULTI_LAN: TemplateSpec(
         name="Multi LAN",
@@ -62,7 +62,7 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         key=TopologyTemplate.HUB_SPOKE,
         description="1 central hub router + N spoke routers, each with its LAN.",
         default_routers=4, default_pcs_per_lan=2,
-        tags=("Advanced", "wan", "hub-spoke"),
+        tags=("advanced", "wan", "hub-spoke"),
     ),
     TopologyTemplate.BRANCH_OFFICE: TemplateSpec(
         name="Branch Office",
@@ -79,7 +79,7 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         min_routers=3, max_routers=3, default_routers=3,
         default_pcs_per_lan=3,
         default_routing=RoutingProtocol.OSPF,
-        tags=("Advanced", "Redundancy", "ospf"),
+        tags=("advanced", "redundancy", "ospf"),
     ),
     TopologyTemplate.ROUTER_ON_A_STICK: TemplateSpec(
         name="Router on a Stick",
@@ -87,13 +87,25 @@ TEMPLATES: dict[TopologyTemplate, TemplateSpec] = {
         description="1 router + 1 switch with inter-VLAN routing (subinterfaces .1q).",
         min_routers=1, max_routers=1, default_routers=1,
         default_switches_per_router=1, default_pcs_per_lan=6,
-        tags=("Advanced", "vlan", "inter-vlan"),
+        tags=("advanced", "vlan", "inter-vlan"),
+    ),
+    TopologyTemplate.SPINE_LEAF: TemplateSpec(
+	name="Spine-Leaf",
+	key=TopologyTemplate.SPINE_LEAF,
+	description=("2 Cisco 3650-24PS spine switches and "
+	"4 Cisco 2960-24TT leaf switches. "
+	"Each leaf connects redundantly to both spines "
+	"using GigabitEthernet."),
+	min_routers=1, max_routers=1, default_routers=1,
+	default_pcs_per_lan=0, default_switches_per_router=0,
+	requires_wan=False,
+	tags=("advanced","redundancy","spine-leaf"),
     ),
     TopologyTemplate.CUSTOM: TemplateSpec(
         name="Custom",
         key=TopologyTemplate.CUSTOM,
         description="Free topology — all manual parameters.",
-        tags=("Free", "custom"),
+        tags=("free", "custom"),
     ),
 }
 

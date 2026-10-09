@@ -161,6 +161,11 @@ def _switch_3560_ports() -> tuple[PortSpec, ...]:
     gig = (_gig("0/1"), _gig("0/2"))
     return fast + gig
 
+#def _switch_3650_ports() -> tuple[PortSpec, ...]:
+#    fast = tuple(_fast(f"0/{i}") for i in range(1, 25))
+#    gig = (_gig("0/1"), _gig("0/2"))
+#    return fast + gig
+
 def _switch_3650_ports() -> tuple[PortSpec, ...]:
     """
     Cisco 3650-24PS in Packet Tracer 9.x

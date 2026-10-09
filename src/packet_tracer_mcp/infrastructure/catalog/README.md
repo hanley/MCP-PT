@@ -129,6 +129,7 @@ Covers 101 aliases for all device types. Used by `resolve_model()` in
 | `branch_office` | Branch Office | 2–10 | Static | Yes | Central Office + Branch Office with WAN | 
 | `three_router_triangle` | Triangle | 3 | OSPF | No | 3 routers with redundancy | 
 | `router_on_a_stick` | Router on a Stick | 1 | none | No | Inter-VLAN routing | 
+| `spine_leaf` | Spine Leaf | none | none | No | spine-leaf datacenter | 
 | `custom` | Custom | 1–20 | static | No | No restrictions |
 
 **Function:**
