@@ -21,7 +21,7 @@ sudo apt update
 sudo apt install curl ca-certificates gnupg -y
 
 
-<i>Update Claude repository and install</i>
+<i>Update Claude repository</i>
 ```
 tmp_key="$(mktemp)"
 tmp_gnupg="$(mktemp -d)"
